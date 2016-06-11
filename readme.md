@@ -14,7 +14,7 @@ Install the package through Composer:
 composer require mangopixel/laravel-adjuster
 ```
 
-After updating Composer, append the following service provider to the ``$providers` variable in `app/config.php`:
+After updating Composer, append the following service provider to the `$providers` array in `app/config.php`:
 
 ```php
 \Mangopixel\Adjuster\AdjusterServiceProvider::class
@@ -127,4 +127,4 @@ If you would like to extend the functionality of the `Adjustment` model you may 
 
 ## License
 
-Laravel Adjuster is free software distributed under the terms of the MIT license.`
+Laravel Adjuster is free software distributed under the terms of the MIT license.
