@@ -14,7 +14,7 @@ Install the package through Composer:
 composer require mangopixel/laravel-adjuster
 ```
 
-After updating Composer, append the following service provider to the `$providers` array in `app/config.php`:
+After updating Composer, append the following service provider to the `providers` key in `app/config.php`:
 
 ```php
 \Mangopixel\Adjuster\AdjusterServiceProvider::class
