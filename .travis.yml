@@ -8,3 +8,6 @@ before_script:
   - composer dump-autoload
 script:
   - vendor/bin/phpunit
+addons:
+    code_climate:
+        repo_token: f7c8f7e557e96a393cd1b5a4842f354283b1d69844db8bdc5b259826a2fa2414
