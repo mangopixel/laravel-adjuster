@@ -1,6 +1,6 @@
 # Laravel Adjuster
 
-[![Build Status](https://travis-ci.org/mangopixel/laravel-adjuster.svg?branch=master)](https://travis-ci.org/mangopixel/laravel-adjuster)
+[![Build Status](https://img.shields.io/travis/mangopixel/laravel-adjuster/master.svg?style=flat-square)](https://travis-ci.org/mangopixel/laravel-adjuster)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](license.md)
 
 A Laravel package for updating your models indirectly using an adjustments table. This allows you to overwrite a model's attributes without changing the model directly. This can be useful in cases where you don't have control over the data flow of your models.
