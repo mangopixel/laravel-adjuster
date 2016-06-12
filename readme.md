@@ -1,5 +1,10 @@
 # Laravel Adjuster
 
+[![Latest Version on Packagist][ico-version]][link-packagist]
+[![Software License][ico-license]](LICENSE.md)
+[![Build Status][ico-travis]][link-travis]
+[![Total Downloads][ico-downloads]][link-downloads]
+
 A Laravel package for updating your models indirectly using an adjustments table. This allows you to overwrite a model's attributes without changing the model directly. This can be useful in cases where you don't have control over the data flow of your models.
 
 A concrete example of its usefulness is when you feed a table with data from an API, and use a cron job to keep the table updated with the newest data regularly. In this case you might want to keep the table untouched so your changes are not overwritten by newer updates without you realising. Updating the table using an adjuster solves this problem as all adjustments you make to the data are stored in another table.
