@@ -1,21 +1,38 @@
 {
     "name": "mangopixel/laravel-adjuster",
     "description": "A Laravel package for updating your models indirectly using an adjustments table. This allows you to overwrite a models attributes without changing the model directly.",
-    "keywords": [ "laravel", "eloquent", "adjuster", "adjustment" ],
+    "keywords": [
+        "laravel",
+        "eloquent",
+        "adjuster",
+        "adjustment"
+    ],
     "homepage": "https://github.com/mangopixel/laravel-adjuster",
     "license": "MIT",
     "authors": [
         {
-            "name": "Flugger",
+            "name": "Alexander Tømmerås",
             "email": "flugged@gmail.com"
         }
     ],
     "require": {
-        "illuminate/database": "~5.0"
+        "illuminate/database": "^5.2.23",
+        "illuminate/support": "^5.2.23"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.4",
+        "orchestra/testbench": "~3.0",
+        "mockery/mockery": "^0.9.5",
+        "fzaninotto/faker": "^1.6"
     },
     "autoload": {
         "psr-4": {
-            "Mangopixel\\Adjuster": "src/"
+            "Mangopixel\\Adjuster\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Mangopixel\\Adjuster\\Tests\\": "tests"
         }
     }
 }
