@@ -1,12 +1,7 @@
 {
     "name": "mangopixel/laravel-adjuster",
     "description": "A Laravel package for updating your models indirectly using an adjustments table.",
-    "keywords": [
-        "laravel",
-        "eloquent",
-        "adjuster",
-        "adjustment"
-    ],
+    "keywords": [ "laravel", "eloquent", "adjuster", "adjustment" ],
     "homepage": "https://github.com/mangopixel/laravel-adjuster",
     "license": "MIT",
     "authors": [
