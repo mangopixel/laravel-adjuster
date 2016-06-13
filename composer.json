@@ -19,8 +19,7 @@
         "phpunit/phpunit": "^5.4",
         "orchestra/testbench": "~3.0",
         "mockery/mockery": "^0.9.5",
-        "fzaninotto/faker": "^1.6",
-        "codeclimate/php-test-reporter": "^0.3.2"
+        "fzaninotto/faker": "^1.6"
     },
     "autoload": {
         "psr-4": {

@@ -7,9 +7,9 @@ return [
     | Adjustment Model Path
     |--------------------------------------------------------------------------
     |
-    | This key is used by the Illuminate encrypter service and should be set
-    | to a random, 32 character string, otherwise these encrypted strings
-    | will not be safe. Please do this before deploying an application!
+    | This key identify which model should be used for creating adjustments.
+    | If you're not satisfied with the model provided by the package, you
+    | may create a new model and set the class path below accordingly.
     |
     */
 
@@ -20,9 +20,9 @@ return [
     | Adjustable Column Name
     |--------------------------------------------------------------------------
     |
-    | This key is used by the Illuminate encrypter service and should be set
-    | to a random, 32 character string, otherwise these encrypted strings
-    | will not be safe. Please do this before deploying an application!
+    | If you change the model you may also like to customize the name of the
+    | table columns. This key is the name of the polymorphic relationship
+    | between an adjustment and an adjustable model. Change it as fit.
     |
     */
 
@@ -33,9 +33,9 @@ return [
     | Changes Column Name
     |--------------------------------------------------------------------------
     |
-    | This key is used by the Illuminate encrypter service and should be set
-    | to a random, 32 character string, otherwise these encrypted strings
-    | will not be safe. Please do this before deploying an application!
+    | All changes in an adjustment is saved in a JSON column. This column is
+    | by default named changes, but you may change the value below if you
+    | want a different column name. Make sure to change the fillables.
     |
     */
 
@@ -46,9 +46,9 @@ return [
     | Save Protection
     |--------------------------------------------------------------------------
     |
-    | This key is used by the Illuminate encrypter service and should be set
-    | to a random, 32 character string, otherwise these encrypted strings
-    | will not be safe. Please do this before deploying an application!
+    | Because the package is supposed to make adjustments to a model without
+    | changing the model directly, it will protect you from persisting an
+    | adjusted model, feel free to turn off the save protection below.
     |
     */
 
