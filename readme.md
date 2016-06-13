@@ -27,7 +27,7 @@ After updating Composer, append the following service provider to the `providers
 You may also publish the package configuration file and migrations using the following Artisan command:
 
 ```shell
-php artisan vendor:publish --provider=\Mangopixel\Adjuster\AdjusterServiceProvider
+php artisan vendor:publish --provider="Mangopixel\Adjuster\AdjusterServiceProvider"
 ```
 
 The configuration file is well documented and you may edit it to suit your needs. You may also edit the migration file to your liking. However, make sure you update the `adjustable_column` and `changes_column` values in the configuration if you change the default column names.
