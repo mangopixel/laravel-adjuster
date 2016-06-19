@@ -1,13 +1,13 @@
 # Laravel Adjuster
 
 [![Latest Version](https://img.shields.io/packagist/v/mangopixel/laravel-adjuster.svg?style=flat-square)](https://packagist.org/packages/mangopixel/laravel-adjuster)
-[![Packagist Downloads](https://img.shields.io/packagist/dt/mangopixel/laravel-adjuster.svg?style=flat-square)](https://packagist.org/packages/mangopixel/laravel-adjuster)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](license.md)
 [![Build Status](https://img.shields.io/travis/mangopixel/laravel-adjuster/master.svg?style=flat-square)](https://travis-ci.org/mangopixel/laravel-adjuster)
 [![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/mangopixel/laravel-adjuster.svg?style=flat-square)](https://scrutinizer-ci.com/g/mangopixel/laravel-adjuster/?branch=master)
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](license.md)
+[![Packagist Downloads](https://img.shields.io/packagist/dt/mangopixel/laravel-adjuster.svg?style=flat-square)](https://packagist.org/packages/mangopixel/laravel-adjuster)
 
 
-A Laravel package for updating your models indirectly using an adjustments table. This allows you to overwrite a model's attributes without changing the model directly. This can be useful in cases where you don't have control over the data flow of your models.
+A Laravel package for updating your Eloquent models indirectly using an adjustments table. This allows you to overwrite a model's attributes without changing the model directly. This can be useful in cases where you don't have control over the data flow of your models. 
 
 A concrete example of its usefulness is when you feed a table with data from an API, and use a cron job to keep the table updated with the most recent data. In this case you might want to keep the table untouched so your changes are not overwritten by newer updates without you realising. Updating the table using an adjuster solves this problem as all adjustments you make to the data are stored in another table.
 
@@ -128,7 +128,7 @@ $adjustment->adjustable;
 
 This will return the model relating to the adjustment.
 
-### Extending the adjustment model
+## Extension
 
 If you would like to extend the functionality of the `Adjustment` model you may simply create a new model that extends `Mangopixel\Adjuster\Adjustment`. You will also need to update the `adjustment_model` in the configuration file so the package knows which class to use as the model.
 
