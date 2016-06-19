@@ -3,7 +3,7 @@
 [![Latest Version](https://img.shields.io/packagist/v/mangopixel/laravel-adjuster.svg?style=flat-square)](https://packagist.org/packages/mangopixel/laravel-adjuster)
 [![Packagist Downloads](https://img.shields.io/packagist/dt/mangopixel/laravel-adjuster.svg?style=flat-square)](https://packagist.org/packages/mangopixel/laravel-adjuster)
 [![Build Status](https://img.shields.io/travis/mangopixel/laravel-adjuster/master.svg?style=flat-square)](https://travis-ci.org/mangopixel/laravel-adjuster)
-[![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/filp/whoops.svg?style=flat-square)](https://scrutinizer-ci.com/g/mangopixel/laravel-adjuster/?branch=master)
+[![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/mangopixel/laravel-adjuster.svg?style=flat-square)](https://scrutinizer-ci.com/g/mangopixel/laravel-adjuster/?branch=master)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](license.md)
 
 
