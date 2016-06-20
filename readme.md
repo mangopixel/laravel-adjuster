@@ -19,7 +19,7 @@ This package requires:
 - PHP 7.0+
 - Laravel 5.0+
 
-The default migration also uses a json column to store changes for adjustments. Json columns are only supported in MySql version 5.7 or higher and other database types that support Json. You may also change the migration data type to something else (like text) if your selected database doesn't support json columns.
+The default adjustments migration also uses a JSON column to store changes. JSON columns are only supported in MySQL version 5.7 or higher and other databased that support Json. You may also change the migration data type to something else (like text) if your selected database doesn't support JSON columns.
 
 ## Installation
 
