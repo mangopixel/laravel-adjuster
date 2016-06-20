@@ -1,6 +1,6 @@
 # Laravel Adjuster
 
-[![Latest Version](https://img.shields.io/packagist/v/mangopixel/laravel-adjuster.svg?style=flat-square)](https://packagist.org/packages/mangopixel/laravel-adjuster)
+[![Latest Stable Version](https://poser.pugx.org/mangopixel/laravel-adjuster/v/stable?format=flat-square)](https://github.com/mangopixel/laravel-adjuster)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](license.md)
 [![Build Status](https://img.shields.io/travis/mangopixel/laravel-adjuster/master.svg?style=flat-square)](https://travis-ci.org/mangopixel/laravel-adjuster)
 [![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/mangopixel/laravel-adjuster.svg?style=flat-square)](https://scrutinizer-ci.com/g/mangopixel/laravel-adjuster/?branch=master)
@@ -12,6 +12,14 @@ A Laravel package for updating your Eloquent models indirectly using an adjustme
 A concrete example of its usefulness is when you feed a table with data from an API, and use a cron job to keep the table updated with the most recent data. In this case you might want to keep the table untouched so your changes are not overwritten by newer updates without you realising. Updating the table using an adjuster solves this problem as all adjustments you make to the data are stored in another table.
 
 Most of the functionality lives in a trait, making it easy to use in your models. You can also adjust multiple models using the same adjustments table, as it uses polymorphic relationships. The package is well tested and extremely lightweight.
+
+## Requirements
+
+This package requires:
+- PHP 7.0+
+- Laravel 5.0+
+
+The default migration also uses a json column to store changes for adjustments. Json columns are only supported in MySql version 5.7 or higher and other database types that support Json. You may also change the migration data type to something else (like text) if your selected database doesn't support json columns.
 
 ## Installation
 
