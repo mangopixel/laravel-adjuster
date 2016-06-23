@@ -1,6 +1,6 @@
 {
     "name": "mangopixel/laravel-adjuster",
-    "description": "A Laravel package for updating your Eloquent models indirectly using an adjustments table",
+    "description": "A Laravel package for updating your Eloquent models indirectly using an adjustments table.",
     "keywords": [
         "laravel",
         "eloquent",
