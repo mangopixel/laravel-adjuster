@@ -3,18 +3,36 @@
 namespace Mangopixel\Adjuster;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
+/**
+ * An Eloquent model used to represent an adjustment made to another model. If you want to
+ * make any modifications to the model, you can extend it or create your own model from
+ * scratch. Just make sure to update the adjustable_model key in the configurations.
+ *
+ * @package Laravel Adjuster
+ * @author  Alexander Tømmerås <flugged@gmail.com>
+ * @license The MIT License
+ */
 class Adjustment extends Model
 {
     /**
-     * The attributes that are mass assignable.
+     * The attributes that should be cast to native types.
      *
      * @var array
      */
-    protected $fillable = [
+    protected $casts = [
+        'changes' => 'array'
+    ];
+
+    /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = [
         'adjustable_id',
-        'adjustable_type',
-        'changes'
+        'adjustable_type'
     ];
 
     /**
@@ -27,20 +45,10 @@ class Adjustment extends Model
     /**
      * Get the adjustable model associated with the adjustment.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return MorphTo
      */
-    public function adjustable()
+    public function adjustable():MorphTo
     {
-        return $this->morphTo();
-    }
-
-    /**
-     * Get the adjustable model associated with the adjustment.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function getChangesAttribute( $changes )
-    {
-        return json_decode( $changes, true );
+        return $this->morphTo( config( 'adjuster.adjustable_column' ) );
     }
 }

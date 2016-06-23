@@ -5,14 +5,29 @@ namespace Mangopixel\Adjuster\Tests;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-use Mangopixel\Adjuster\Adjustable;
+use Illuminate\Database\Schema\Builder;
 use Mangopixel\Adjuster\AdjusterServiceProvider;
-use Mangopixel\Adjuster\HasAdjustments;
+use Mangopixel\Adjuster\CanBeAdjusted;
+use Mangopixel\Adjuster\Contracts\Adjustable;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
+/**
+ * This is the base test case class and is where the testing environment bootstrapping
+ * takes place. All other testing classes should extend from this class.
+ *
+ * @package Laravel Adjuster
+ * @author  Alexander Tømmerås <flugged@gmail.com>
+ * @license The MIT License
+ */
 abstract class TestCase extends BaseTestCase
 {
+    /**
+     * Save an instance of the schema builder for easy access.
+     *
+     * @var Builder
+     */
+    protected $schema;
+
     /**
      * Setup the test environment.
      *
@@ -22,15 +37,11 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
 
+        $this->schema = $this->app[ 'db' ]->connection()->getSchemaBuilder();
         $this->runTestMigrations();
-        $this->artisan( 'migrate', [
-            '--database' => 'testbench',
-            '--realpath' => realpath( __DIR__ . '/../resources/migrations' ),
-        ] );
 
         $this->beforeApplicationDestroyed( function () {
             $this->rollbackTestMigrations();
-            $this->artisan( 'migrate:rollback' );
         } );
     }
 
@@ -44,7 +55,7 @@ abstract class TestCase extends BaseTestCase
     {
         $app[ 'config' ]->set( 'database.default', 'testbench' );
         $app[ 'config' ]->set( 'database.connections.testbench', [
-            'driver'   => 'sqlite',
+            'driver' => 'sqlite',
             'database' => ':memory:'
         ] );
     }
@@ -68,15 +79,16 @@ abstract class TestCase extends BaseTestCase
      */
     protected function runTestMigrations()
     {
-        if ( Schema::hasTable( 'fruits' ) ) {
-            return;
-        }
+        include_once __DIR__ . '/../resources/migrations/create_adjustments_table.php.stub';
+        ( new \CreateAdjustmentsTable() )->up();
 
-        Schema::create( 'fruits', function ( Blueprint $table ) {
-            $table->increments( 'id' );
-            $table->string( 'name' );
-            $table->integer( 'price' );
-        } );
+        if ( ! $this->schema->hasTable( 'fruits' ) ) {
+            $this->schema->create( 'fruits', function ( Blueprint $table ) {
+                $table->increments( 'id' );
+                $table->string( 'name' );
+                $table->integer( 'price' );
+            } );
+        }
     }
 
     /**
@@ -86,20 +98,22 @@ abstract class TestCase extends BaseTestCase
      */
     protected function rollbackTestMigrations()
     {
-        Schema::drop( 'fruits' );
+        ( new \CreateAdjustmentsTable() )->down();
+
+        $this->schema->drop( 'fruits' );
     }
 
     /**
      * Creates a new adjustable model for testing purposes.
      *
      * @param  array $attributes
-     * @return void
+     * @return Adjustable
      */
-    protected function createTestModel( $attributes )
+    protected function createTestModel( array $attributes = [ ] ):Adjustable
     {
         $model = new class extends Model implements Adjustable
         {
-            use HasAdjustments;
+            use CanBeAdjusted;
 
             protected $fillable = [ 'name', 'price' ];
             protected $table = 'fruits';
@@ -111,10 +125,77 @@ abstract class TestCase extends BaseTestCase
             }
         };
 
+        return $this->storeAdjustableModel( $model, $attributes );
+    }
+
+    /**
+     * Creates a new adjustable model for testing purposes with save protection disabled.
+     *
+     * @param  array $attributes
+     * @return Adjustable
+     */
+    protected function createUnprotectedTestModel( array $attributes = [ ] ):Adjustable
+    {
+        $model = new class extends Model implements Adjustable
+        {
+            use CanBeAdjusted;
+
+            protected $saveProtection = false;
+            protected $fillable = [ 'name', 'price' ];
+            protected $table = 'fruits';
+            public $timestamps = false;
+
+            public function getMorphClass()
+            {
+                return $this->getTable();
+            }
+        };
+
+        return $this->storeAdjustableModel( $model, $attributes );
+    }
+
+    /**
+     * Creates a new adjustable model for testing purposes with save protection enabled.
+     *
+     * @param  array $attributes
+     * @return Adjustable
+     */
+    protected function createProtectedTestModel( array $attributes = [ ] ):Adjustable
+    {
+        $model = new class extends Model implements Adjustable
+        {
+            use CanBeAdjusted;
+
+            protected $saveProtection = true;
+            protected $fillable = [ 'name', 'price' ];
+            protected $table = 'fruits';
+            public $timestamps = false;
+
+            public function getMorphClass()
+            {
+                return $this->getTable();
+            }
+        };
+
+        return $this->storeAdjustableModel( $model, $attributes );
+    }
+
+    /**
+     * Stores an actual instance of an adjustable model to the database.
+     *
+     * @param  Model $model
+     * @param  array $attributes
+     * @return Adjustable
+     */
+    protected function storeAdjustableModel( Model $model, array $attributes = [ ] ):Adjustable
+    {
         Relation::morphMap( [
             $model->getTable() => get_class( $model )
         ] );
 
-        return $model->create( $attributes );
+        return $model->create( array_merge( [
+            'name' => 'Mango',
+            'price' => 10
+        ], $attributes ) );
     }
 }
