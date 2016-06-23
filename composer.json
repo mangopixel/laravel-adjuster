@@ -5,7 +5,8 @@
         "laravel",
         "eloquent",
         "adjuster",
-        "adjustment"
+        "adjustment",
+        "api"
     ],
     "homepage": "https://github.com/mangopixel/laravel-adjuster",
     "license": "MIT",
