@@ -36,7 +36,7 @@ interface Adjustable
     /**
      * Fill the model instance with the adjusted values, replacing the original values.
      *
-     * @return self
+     * @return $this
      */
     public function applyAdjustments():Model;
 

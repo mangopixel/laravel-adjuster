@@ -17,7 +17,7 @@ class ModelAdjustedException extends Exception
     /**
      * Constructor.
      *
-     * @param string $message
+     * @param string|null $message
      */
     public function __construct( string $message = null )
     {

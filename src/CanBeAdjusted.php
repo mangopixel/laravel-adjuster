@@ -93,7 +93,7 @@ trait CanBeAdjusted
     /**
      * Fill the model instance with the adjusted values, replacing the original values.
      *
-     * @return self
+     * @return $this
      */
     public function applyAdjustments():Model
     {
@@ -152,4 +152,35 @@ trait CanBeAdjusted
                 return $changes->toJson();
         }
     }
+
+    /**
+     * Fill the model with an array of attributes.
+     *
+     * @param  array $attributes
+     * @return $this
+     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
+     */
+    abstract public function fill( array $attributes );
+
+    /**
+     * Define a polymorphic one-to-one relationship.
+     *
+     * @param  string $related
+     * @param  string $name
+     * @param  string $type
+     * @param  string $id
+     * @param  string $localKey
+     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
+     */
+    abstract public function morphOne( $related, $name, $type = null, $id = null, $localKey = null );
+
+    /**
+     * Define a one-to-one relationship.
+     *
+     * @param  string $related
+     * @param  string $foreignKey
+     * @param  string $localKey
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    abstract public function hasOne( $related, $foreignKey = null, $localKey = null );
 }
