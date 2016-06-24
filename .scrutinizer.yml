@@ -76,5 +76,3 @@ coding_style:
 build:
     environment:
         php: 7.0.6
-    tools:
-        external_code_coverage: true
