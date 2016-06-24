@@ -99,7 +99,9 @@ trait CanBeAdjusted
     {
         $changes = $this->adjustment->{config( 'adjuster.changes_column' )} ?? null;
 
-        if ( is_string( $changes ) ) {
+        if ( is_null( $changes ) ) {
+            return $this;
+        } elseif ( is_string( $changes ) ) {
             $changes = json_decode( $changes, true );
         } elseif ( $changes instanceof Collection ) {
             $changes = $changes->toArray();
@@ -165,11 +167,11 @@ trait CanBeAdjusted
     /**
      * Define a polymorphic one-to-one relationship.
      *
-     * @param  string $related
-     * @param  string $name
-     * @param  string $type
-     * @param  string $id
-     * @param  string $localKey
+     * @param  string      $related
+     * @param  string      $name
+     * @param  string|null $type
+     * @param  string|null $id
+     * @param  string|null $localKey
      * @return \Illuminate\Database\Eloquent\Relations\MorphOne
      */
     abstract public function morphOne( $related, $name, $type = null, $id = null, $localKey = null );
@@ -177,9 +179,9 @@ trait CanBeAdjusted
     /**
      * Define a one-to-one relationship.
      *
-     * @param  string $related
-     * @param  string $foreignKey
-     * @param  string $localKey
+     * @param  string      $related
+     * @param  string|null $foreignKey
+     * @param  string|null $localKey
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     abstract public function hasOne( $related, $foreignKey = null, $localKey = null );

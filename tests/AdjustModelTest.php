@@ -259,6 +259,32 @@ class AdjustModelTest extends TestCase
     }
 
     /**
+     * If there are no adjustments stored for the given model you're trying to call
+     * applyAdjustments on, there should be no errors thrown and the model's data
+     * should not be modified.
+     *
+     * @test
+     */
+    public function youCanCallApplyAdjustmentsWhenNoAdjustments()
+    {
+        // Arrange...
+        $fruit = $this->createTestModel();
+
+        // Act...
+        $fruit->applyAdjustments();
+
+        // Assert...
+        $this->assertFalse( $fruit->isAdjusted() );
+        $this->assertEquals( $fruit->name, 'Mango' );
+        $this->assertEquals( $fruit->price, 10 );
+
+        $this->seeInDatabase( 'fruits', [
+            'name' => 'Mango',
+            'price' => 10
+        ] );
+    }
+
+    /**
      * If the save protection configuration is not disabled it should throw an exception
      * if you try to persist the changes to the model after applying adjustments.
      *
