@@ -58,9 +58,6 @@ trait CanBeAdjusted
         $adjustment = $this->adjustment()->exists() ? $this->adjustment : app( 'adjuster.model' );
         $existingChanges = collect( $adjustment->$changesColumn );
 
-        // We will fetch any existing changes from the adjustment and then filter them down
-        // based on certain criterias. If the value is null or the adjusted value equals
-        // the original value we will remove the value before persisting the changes.
         $changes = $existingChanges->merge( $changes )->filter( function ( $value, $attribute ) {
             return ! is_null( $value ) && $this->$attribute !== $value;
         } );
