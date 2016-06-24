@@ -47,15 +47,9 @@ The configuration file is well documented and you may edit it to suit your needs
 
 After installing and adding the service provider, you should migrate the `adjustments` table. If you have published the vendor files as described in the installation guide above you should have the new migration file in the migrations folder. In that case you can just run `php artisan migrate`.
 
-### Changing the migration file
+### Adding the trait and contract
 
-If for some reason the default table name adjustments or any of the default column names don't fit your needs, feel free to change them to whatever suits your needs. Just make sure to update the `adjustments_table`, `adjustable_column` and `changes_column` in the configuration file accordingly.
-
-The migration uses a json field by default. This is only supported in MySql 5.7+, you should however be able to change the field to a text field instead without any repercussions.
-
-### Adding the trait
-
-You need to use the `HasAdjustments` trait for every model you want to be able to adjust. There is also an optional interface `Adjustable` which the trait fulfills. An example model:
+You need to use the `Mangopixel\Adjuster\CanBeAdjusted` trait for every model you want to be able to adjust together with the `Mangopixel\Adjuster\Adjustable` interface which the trait fulfills. An example model:
 
 ```php
 <?php
@@ -63,17 +57,17 @@ You need to use the `HasAdjustments` trait for every model you want to be able t
 namespace App;
 
 use Mangopixel\Adjuster\Adjustable;
-use Mangopixel\Adjuster\HasAdjustments;
+use Mangopixel\Adjuster\CanBeAdjusted;
 
 class Fruit extends Model implements Adjustable
 {
-  use HasAdjustments;
+  use CanBeAdjusted;
 }
 ```
 
 ### Making adjustments
 
-The `HasAdjustments` trait gives you access to multiple methods, among others the adjust method, which you can use to make a new adjustment to the model:
+The `Mangopixel\Adjuster\CanBeAdjusted` trait gives you access to multiple methods, among others the adjust method, which you can use to make a new adjustment to the model:
 
 ```php
 $fruit->adjust( [
@@ -82,9 +76,20 @@ $fruit->adjust( [
 ] );
 ```
 
-The above will create a new row in the adjustments table linking to the Fruit model through a polymorphic relationship (with `adjustable_id` and `adjustable_type`). The row will also have a JSON column containing the updated name and price.
+The above will create a new row in the adjustments table linking to the Fruit model through a polymorphic relationship (with `adjustable_id` and `adjustable_type`). The row will also have a JSON column containing the updated name and price. If a row already exists, however, it will instead merge the new changes with the old ones.
 
-If a row already exists, however, it will instead merge the new changes with the old ones.
+If you have additional columns in the adjustments table you may pass these along as the second optional parameter:
+
+```php
+$fruit->adjust( [
+    'name' => 'Mango',
+    'price' => 100
+], [
+    'message' => 'This adjustment was fruitful'
+] );
+```
+
+You can read more about adding columns to the adjustments table in the extensions section below.
 
 ### Removing adjustments
 
@@ -110,6 +115,14 @@ $fruit->applyAdjustments();
 
 This will fill the model's attributes with the values from the `adjustments` tables. It will not persist the new values to the model's table. If you try to save() a model after applying adjustments you will get a `\Mangopixel\Adjuster\ModelAdjustedException` exception. The idea of the package is to not update the model directly, it therefore protects you from ever persisting the changes applied from the adjustments to the database.
 
+If you call `applyAdjustments` when there is no existing adjustment record, no adjustments will be applied, but you will not get an error. You may then use the `isAdjusted` method from the `Mangopixel\Adjuster\CanBeAdjusted` trait to check if there actually was any adjustments applied or not:
+
+```php
+$fruit->isAdjusted();
+```
+
+This function will check if the model has called `applyAdjustments` and has active adjustments. 
+
 ### Disable save protection
 
 If you don't want the package to throw an exception when trying to save a model instance where changes from the `adjustments` table has been applied, you may disable the `save_protection` in the configuration file.
@@ -118,6 +131,12 @@ If you only want to disable it on individual models you can also add a new prope
 
 ```php
 protected $saveProtection = false;
+```
+
+You may also check if save protection is enabled on a current model using the `hasSaveProtection` method from the `Mangopixel\Adjuster\CanBeAdjusted` trait:
+
+```php
+$fruit->hasSaveProtection();
 ```
 
 ### Accessing the adjustment model
@@ -134,11 +153,50 @@ Which returns the adjustment row relating to the model, if one exists. You also 
 $adjustment->adjustable;
 ```
 
-This will return the model relating to the adjustment.
+This will return the model relating to the adjustment. Do note that this is only true if you have polymorphic relationships enabled. If you disable polymorphic relations you will not have access to an inverse relationship, simply because the adjustment model cannot guess which model it's related to. If you still want the inverse relation you can extend the Adjustment model and add the relationship function in there.
+
+### Disabling polymorphic relationships
+
+If you're only planning on adjusting one kind of model, you might fine it a bit overkill to use polymorphic relationships. Don't worry, it's a breeze to disable it. Just set the `polymorphic` configuration key to false.
+
+The `adjustable_column` key works slightly different depending on wether or not polymorphic relations are enabled or not. If they are enabled, two columns will be created in the adjustments table: one with ```_id``` suffix and one with ```_type``` suffix. However, with polymorphic relations disabled it will only create one foreign key column.
+
+So, to give an example. Let's say you have an adjustable Fruit model, and this is the only model you want to adjust. You may disable polymorphic relations in the configuration and set the `adjustable_column` to `fruit_id`. And you're done, you now have a one to one relationship between an adjustment and a fruit.
 
 ## Extension
 
+### Extending the Adjustment model
+
 If you would like to extend the functionality of the `Adjustment` model you may simply create a new model that extends `Mangopixel\Adjuster\Adjustment`. You will also need to update the `adjustment_model` in the configuration file so the package knows which class to use as the model.
+
+You may also just create a new model from scratch, just make sure to disable timestamps (if you don't add the timestamps columns to the migration file). The only thing nessecary for the model to work out of the box:
+
+```php
+<?php
+
+namespace App;
+
+class Adjustment extends Model
+{
+    public $timestamps = false;
+}
+```
+
+You may also add a `protected $casts` to always get an array when you try to access `$adjustment->changes`:
+
+```php
+protected $casts = [ 'changes' => 'array' ]
+```
+
+You may also cast it to a Laravel Collection using `'collection'` as casting value. Laravel Adjuster will do the correct casting for you when persisting adjustments to the database.
+
+### Modifying the migration file
+
+You may add new columns to the adjustments table migration file. If for some reason the default column names don't fit your needs, feel free to change them to whatever suits your needs. Just make sure to update the `adjustable_column` and `changes_column` in the configuration file accordingly.
+
+The migration uses a json field by default. This is only supported in MySql 5.7+, you should however be able to change the field to a text field instead without any repercussions.
+
+You may also change the table name, but you will need to create your own adjustment model and set the `protected $table` to whatever you like.
 
 ## License
 
