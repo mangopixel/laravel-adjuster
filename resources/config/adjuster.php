@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'adjustment_model' => \Mangopixel\Adjuster\Adjustment::class,
+    'adjustment_model' => Mangopixel\Adjuster\Adjustment::class,
 
     /*
     |--------------------------------------------------------------------------

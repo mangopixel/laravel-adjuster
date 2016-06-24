@@ -31,10 +31,12 @@ class AdjusterServiceProvider extends BaseServiceProvider
             __DIR__ . '/../resources/config/adjuster.php' => config_path( 'adjuster.php' )
         ], 'config' );
 
-        $timestamp = date( 'Y_m_d_His', time() );
-        $this->publishes( [
-            __DIR__ . '/../resources/migrations/create_adjustments_table.php.stub' => database_path( 'migrations' ) . '/' . $timestamp . '_create_adjustments_table.php',
-        ], 'migrations' );
+        if ( ! class_exists( 'CreateAdjustmentsTable' ) ) {
+            $timestamp = date( 'Y_m_d_His', time() );
+            $this->publishes( [
+                __DIR__ . '/../resources/migrations/create_adjustments_table.php.stub' => database_path( 'migrations' ) . '/' . $timestamp . '_create_adjustments_table.php',
+            ], 'migrations' );
+        }
     }
 
     /**
