@@ -32,7 +32,7 @@ composer require mangopixel/laravel-adjuster
 After updating Composer, append the following service provider to the `providers` key in `config/app.php`:
 
 ```php
-\Mangopixel\Adjuster\AdjusterServiceProvider::class
+Mangopixel\Adjuster\AdjusterServiceProvider::class
 ```
 
 You may also publish the package configuration file and migrations using the following Artisan command:
@@ -78,7 +78,7 @@ $fruit->adjust( [
 
 The above will create a new row in the adjustments table linking to the Fruit model through a polymorphic relationship (with `adjustable_id` and `adjustable_type`). The row will also have a JSON column containing the updated name and price. If a row already exists, however, it will instead merge the new changes with the old ones.
 
-If you have additional columns in the adjustments table you may pass these along as the second optional parameter:
+If you have additional columns in the adjustments table you may pass these along as a second optional parameter:
 
 ```php
 $fruit->adjust( [
