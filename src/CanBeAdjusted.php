@@ -91,18 +91,17 @@ trait CanBeAdjusted
     {
         $changes = $this->adjustment->{config( 'adjuster.changes_column' )} ?? null;
 
-        if ( is_null( $changes ) ) {
-            return $this;
+        if ( $changes instanceof Collection ) {
+            $changes = $changes->toArray();
         } elseif ( is_string( $changes ) ) {
             $changes = json_decode( $changes, true );
-        } elseif ( $changes instanceof Collection ) {
-            $changes = $changes->toArray();
+        } elseif ( is_null( $changes ) ) {
+            return $this;
         }
 
-        $this->fill( $changes );
         $this->adjusted = true;
 
-        return $this;
+        return $this->fill( $changes );
     }
 
     /**
@@ -131,17 +130,38 @@ trait CanBeAdjusted
      * based on certain criterias. Then we will return the changes converted to the
      * correct data type depending on set casts on the Adjustment model.
      *
-     * @param  arrray $changes
-     * @param  Model  $adjustment
-     * @return mixed
+     * @param  array $changes
+     * @param  Model $adjustment
+     * @return Collection
      */
-    protected function mergeAndFilterChanges( array $changes, Model $adjustment )
+    protected function mergeAndFilterChanges( array $changes, Model $adjustment ):Collection
     {
         $existingChanges = collect( $adjustment->{config( 'adjuster.changes_column' )} );
 
         return $existingChanges->merge( $changes )->filter( function ( $value, $attribute ) {
-            return ! is_null( $value ) && $this->$attribute !== $value;
+            return $this->isValidChange( $attribute, $value );
         } );
+    }
+
+    /**
+     * Checks if a given attribute value pair is valid. The value should not be null and
+     * not be equal the original value, and the attribute should actually be fillable.
+     *
+     * @param  string $changes
+     * @param  mixed  $value
+     * @return bool
+     */
+    protected function isValidChange( string $attribute, $value ):bool
+    {
+        if ( ! $this->isFillable( $attribute ) ) {
+            return false;
+        }
+
+        if ( is_null( $value ) || $value === $this->$attribute ) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

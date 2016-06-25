@@ -229,6 +229,28 @@ class AdjustModelTest extends TestCase
     }
 
     /**
+     * If you try to adjust a model using attributes that don't exist in the given model,
+     * it wont actually save the adjustments.
+     *
+     * @test
+     */
+    public function itShouldNotAddAdjustmentsWithInvalidData()
+    {
+        // Arrange...
+        $fruit = $this->createTestModel();
+
+        // Act...
+        $fruit->adjust( [
+            'invalid' => 123
+        ] );
+
+        // Assert...
+        $this->dontSeeInDatabase( 'adjustments', [
+            'adjustable_id' => $fruit->id
+        ] );
+    }
+
+    /**
      * You may use the applyAdjustments method on the HasAdjustments trait to apply any
      * adjustments set to the model. This will not persist the adjustments, but just
      * fill the model instance with the adjustments data.
@@ -265,7 +287,7 @@ class AdjustModelTest extends TestCase
      *
      * @test
      */
-    public function youCanCallApplyAdjustmentsWhenNoAdjustments()
+    public function youCanCallApplyAdjustmentsWhenNoAdjustmentsExist()
     {
         // Arrange...
         $fruit = $this->createTestModel();
