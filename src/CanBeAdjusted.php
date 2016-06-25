@@ -147,21 +147,17 @@ trait CanBeAdjusted
      * Checks if a given attribute value pair is valid. The value should not be null and
      * not be equal the original value, and the attribute should actually be fillable.
      *
-     * @param  string $changes
+     * @param  string $attribute
      * @param  mixed  $value
      * @return bool
      */
     protected function isValidChange( string $attribute, $value ):bool
     {
-        if ( ! $this->isFillable( $attribute ) ) {
-            return false;
-        }
-
         if ( is_null( $value ) || $value === $this->$attribute ) {
             return false;
         }
 
-        return true;
+        return $this->isFillable( $attribute );
     }
 
     /**
