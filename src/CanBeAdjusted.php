@@ -192,6 +192,11 @@ trait CanBeAdjusted
     abstract public function fill( array $attributes );
 
     /**
+     * Determine if the given attribute may be mass assigned.
+     */
+    abstract public function isFillable( $key );
+
+    /**
      * Define a polymorphic one-to-one relationship.
      */
     abstract public function morphOne( $related, $name, $type = null, $id = null, $localKey = null );
