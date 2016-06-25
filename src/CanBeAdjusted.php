@@ -54,19 +54,14 @@ trait CanBeAdjusted
      */
     public function adjust( array $changes, array $attributes = [ ] )
     {
-        $changesColumn = config( 'adjuster.changes_column' );
         $adjustment = $this->adjustment()->exists() ? $this->adjustment : app( 'adjuster.model' );
-        $existingChanges = collect( $adjustment->$changesColumn );
-
-        $changes = $existingChanges->merge( $changes )->filter( function ( $value, $attribute ) {
-            return ! is_null( $value ) && $this->$attribute !== $value;
-        } );
+        $changes = $this->mergeAndFilterChanges( $changes, $adjustment );
 
         if ( $changes->isEmpty() ) {
             $adjustment->delete();
         } else {
             $adjustment->fill( $attributes );
-            $adjustment->$changesColumn = $this->castChanges( $changes, $adjustment );
+            $adjustment->{config( 'adjuster.changes_column' )} = $this->castChanges( $changes, $adjustment );
             $this->adjustment()->save( $adjustment );
 
             return $adjustment;
@@ -132,8 +127,25 @@ trait CanBeAdjusted
     }
 
     /**
-     * Check if the changes attribute has any set casts on the given model, and if so we
-     * cast the changes collection to the appropiate type.
+     * We will fetch any existing changes from the adjustment and then filter them down
+     * based on certain criterias. Then we will return the changes converted to the
+     * correct data type depending on set casts on the Adjustment model.
+     *
+     * @param  arrray $changes
+     * @param  Model  $adjustment
+     * @return mixed
+     */
+    protected function mergeAndFilterChanges( array $changes, Model $adjustment )
+    {
+        $existingChanges = collect( $adjustment->{config( 'adjuster.changes_column' )} );
+
+        return $existingChanges->merge( $changes )->filter( function ( $value, $attribute ) {
+            return ! is_null( $value ) && $this->$attribute !== $value;
+        } );
+    }
+
+    /**
+     * Cast the changes collection to the appropiate type.
      *
      * @param  Collection $changes
      * @param  Model      $adjustment
@@ -141,7 +153,9 @@ trait CanBeAdjusted
      */
     protected function castChanges( Collection $changes, Model $adjustment )
     {
-        switch ( $adjustment->hasCast( config( 'adjuster.changes_column' ) ) ) {
+        $cast = $adjustment->hasCast( config( 'adjuster.changes_column' ) );
+
+        switch ( $cast ) {
             case 'collection':
                 return $changes;
             case 'array':
@@ -154,32 +168,16 @@ trait CanBeAdjusted
 
     /**
      * Fill the model with an array of attributes.
-     *
-     * @param  array $attributes
-     * @return $this
-     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
     abstract public function fill( array $attributes );
 
     /**
      * Define a polymorphic one-to-one relationship.
-     *
-     * @param  string      $related
-     * @param  string      $name
-     * @param  string|null $type
-     * @param  string|null $id
-     * @param  string|null $localKey
-     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
      */
     abstract public function morphOne( $related, $name, $type = null, $id = null, $localKey = null );
 
     /**
      * Define a one-to-one relationship.
-     *
-     * @param  string      $related
-     * @param  string|null $foreignKey
-     * @param  string|null $localKey
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     abstract public function hasOne( $related, $foreignKey = null, $localKey = null );
 }
